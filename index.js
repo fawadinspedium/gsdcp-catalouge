@@ -9,7 +9,7 @@ const pdfTemplate = require('./documents/index');
 const pdfData = require('./documents/index-2');
 const pdfTemplateAward = require('./documents/award_card');
 const app = express();
-const port = process.env.PORT ||5200;
+const port = process.env.PORT ||5000;
 app.use(cors());
 app.use(bodyParser.json({ limit: "200mb" }));
 app.use(bodyParser.urlencoded({ limit: "200mb",  extended: true, parameterLimit: 1000000 }));
@@ -23,7 +23,7 @@ config = {
 }
 
 app.get('/fetch-pdf/:id', (req, res) => {
-  const data=axios.get(`https://kennelclub.pk/api/send-catalog?id=${req.params.id}`)
+  axios.get(`https://gsdcp.org/api/send-catalog?id=${req.params.id}`)
   .then(response => {
     const path = __dirname+`/${response.data.title}-${response.data.dates}.pdf`;
     if (fs.existsSync(path)) {
@@ -59,7 +59,7 @@ app.get('/fetch-award', (req, res) => {
 })
 
 app.get('/update-pdf/:id', (req, res) => {
-  const data=axios.get(`https://kennelclub.pk/api/send-catalog?id=${req.params.id}`)
+  const data=axios.get(`https://gsdcp.org/api/send-catalog?id=${req.params.id}`)
   .then(response => {
     const path = __dirname+`/${response.data.title}-${response.data.dates}.pdf`;
     if (fs.existsSync(path)) {
@@ -93,7 +93,7 @@ app.get('/update-pdf/:id', (req, res) => {
 })
 
 app.get('/fetch-pdf-html/:id', (req, res) => {
-  const data=axios.get(`https://kennelclub.pk/api/send-catalog?id=${req.params.id}`)
+  const data=axios.get(`https://gsdcp.org/api/send-catalog?id=${req.params.id}`)
   .then(response => {
         res.status(200).send(pdfTemplate(response.data))
   })
@@ -102,7 +102,7 @@ app.get('/fetch-pdf-html/:id', (req, res) => {
   });
 })
 app.get('/fetch-pdf-data/:id', (req, res) => {
-  const data=axios.get(`https://kennelclub.pk/api/send-catalog?id=${req.params.id}`)
+  const data=axios.get(`https://gsdcp.org/api/send-catalog?id=${req.params.id}`)
   .then(response => {
         res.status(200).send(pdfData(response.data))
   })

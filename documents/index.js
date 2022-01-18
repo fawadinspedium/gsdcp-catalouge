@@ -1,6 +1,6 @@
 const axios = require("axios");
-const fs = require("fs");
-const path = require("path");
+const fs=require('fs');
+const path=require('path');
 
 module.exports = (data) => {
   const today = new Date();
@@ -49,13 +49,12 @@ module.exports = (data) => {
 
     return sorted_data;
   }
-
   function formatDogs(dogs) {
     const categories = [...new Set(dogs.map((dogs) => dogs.class_name))];
     return categories.reduce((acc, class_name) => {
       const _dogs = dogs.filter((dogs) => dogs.class_name === class_name);
-      const male_dogs = _dogs.filter((dog) => dog.sex == "Male");
-      const female_dogs = _dogs.filter((dog) => dog.sex == "Female");
+      const male_dogs = _dogs.filter((dog) => dog?.sex === "Male");
+      const female_dogs = _dogs.filter((dog) => dog?.sex === "Female");
       var f_count = 0;
       var m_count = 0;
 
@@ -69,7 +68,7 @@ module.exports = (data) => {
       if (f_count > 0 && m_count > 0) {
         return [
           ...acc,
-          { class_name: class_name, dogs: [female_dogs, male_dogs] },
+          { class_name: class_name, dogs: [female_dogs,male_dogs] },
         ];
       } else if (f_count > 0 && m_count == 0) {
         return [...acc, { class_name: class_name, dogs: [female_dogs] }];
@@ -78,40 +77,6 @@ module.exports = (data) => {
       }
     }, []);
   }
-
-      function formatBreeds(breeds){
-         const categories = [...new Set(breeds.map(breeds=> breeds.group_id))]
-         return categories.reduce((acc, group_id)=> {
-            const _breeds = breeds.filter(breed=> breed.group_id === group_id)
-         return [...acc, {group_id: group_id, breeds: _breeds}]
-         }, [])
-      }
-      
-      const fromatAdverts=()=>{
-         let b_groups=formatBreeds(data.breeds)
-         var groupCount=0;
-         var AdsCount=0;
-         var ads_arr=[]
-
-         for(let l in b_groups){
-               groupCount=groupCount+1
-         }
-         for(let l in data.ads){
-            AdsCount=AdsCount+1
-         }
-
-        if(AdsCount==0){
-           return false
-        }
-         else if(groupCount>AdsCount){
-           ads_arr=Array(10).fill(data.ads).flat()
-            return ads_arr
-         }
-        else{
-          return data.ads
-         }
-      }  
-
     const logoKCPB64 = fs.readFileSync(path.join(__dirname, './logo.png'), {encoding: 'base64'});
     const logoKCPSRC = "data:image/jpeg;base64,"+logoKCPB64;
 
@@ -121,8 +86,6 @@ module.exports = (data) => {
     const backgroundImgSRCB64 = fs.readFileSync(path.join(__dirname, './Catalouge2.png'), {encoding: 'base64'});
     const backgroundImgSRC = "data:image/jpeg;base64,"+backgroundImgSRCB64;
       
-console.log(fromatAdverts())
-
   return `
     <!doctype html>
     <html>
@@ -137,10 +100,11 @@ console.log(fromatAdverts())
                   <style>
                     *{
                       font-family: 'Roboto', sans-serif;
+                      color:whitesmoke;
                       }
                .catalouge-main{
                   padding:50px;
-                  background-image:url(${backgroundImgSRC});
+                  background-image:url(${backgroundImgSRC|| "#"});
                   background-repeat: no-repeat;
                   background-size: cover;
                   height:200mm !important;
@@ -178,181 +142,112 @@ console.log(fromatAdverts())
                p{
                  font-size:13px !important;
                }
+               h1,h2,h3,h4,h5,h6,span,p,b,strong,i{
+                 color:black !important;
+               }
           </style>
        </head>
        <body>
        <div class="catalouge-main" style="padding:50px !important;page-break-before:always">
-            <center>
-            <table  class="header" width="100%">
-            <tr>
-            <td>  <img src=${logoKCPSRC} height="80"/></td>
-            <td aling="center">   
             <center>   
             <h5 style="font-famaily:Acknowledgement; margin:0 20px;">${data?.title}</h5>
             </center>
-            </td>
-            <td>  <img src=${logoFCISRC} height="80"/></td>
-            </tr>    
-            </table>
-            </center>
             <br/>
             <br/>
             <br/>
             <br/>
             <br/>
             <br/>
-            <h1 class="text-uppercase" style="text-align: center;font-family: 'Acknowledgement', sans-serif;">${data.title}</h1>
+            <h1 class="text-uppercase" style="text-align: center;font-family: 'Acknowledgement', sans-serif;">${data?.title}</h1>
             <br/>
             <br/>
-               <h5 class="text-uppercase" style="text-align: center;font-family: 'Acknowledgement', sans-serif;">JUDGES: ${data.judge_names}</h5>
+               <h5 class="text-uppercase" style="text-align: center;font-family: 'Acknowledgement', sans-serif;">JUDGES: ${data?.judge_names}</h5>
                <br/>
                <br/> 
                <br/>
-               <h5 class="text-uppercase"    style="text-align: center;font-family: 'Acknowledgement', sans-serif;">VENUE:  ${data.venue}</h5>
+               <h5 class="text-uppercase"    style="text-align: center;font-family: 'Acknowledgement', sans-serif;">VENUE:  ${data?.venue}</h5>
                <br/>
                <br/>
                <br/>
-               <h5 class="text-uppercase" style="text-align: center;font-family: 'Acknowledgement', sans-serif;">DATE:  ${data.dates}</h5>
+               <h5 class="text-uppercase" style="text-align: center;font-family: 'Acknowledgement', sans-serif;">DATE:  ${data?.dates}</h5>
                </div>
-               
-       ${judges_data.map(
-         ({ judge_name, profile_content, image, type,id }) =>
-           `<div class="catalouge-main" style="padding:50px !important;page-break-before:always">
-            <center>
-            <table  class="header" width="100%">
-            <tr>
-            <td>  <img src=${logoKCPSRC} height="80"/></td>
-            <td aling="center">   
-            <center>   
-            <h5 style="font-famaily:Acknowledgement; margin:0 20px;">${data?.title}</h5>
-            </center>
-            </td>
-            <td>  <img src=${logoFCISRC} height="80"/></td>
-            </tr>     
-            </table>
-            </center>
-            <br/>
-               <h1 style="font-size:40px;  text-align: center;font-family: 'Acknowledgement', sans-serif;" class="text-uppercase">${judge_name}</h1>
-               <br/>
-               <p align="justify" style="font-size:20px; font-weight:300 !important;">
-                <img style="margin-right:10px;float:left;margin-left:10px; margin-bottom:10px" height="150px" 
-                src=${data?.judge_img[id]}/>
-               ${profile_content}</p>
-               </div>
-               `
-       )}
 
-      ${formatBreeds(data?.breeds).map(({breeds},ind)=>(
 
-         `
-         ${fromatAdverts()?`
-         <div class="catalouge-main" style="padding:50px !important;page-break-before:always">
-            <img src=${data.ads_img[fromatAdverts()[ind]?.id]} height="100%" width="100%"/>
-         </div>`:null}
-         ${
-         breeds.map(
-        ({ id, breed, group_id, description, image, countryName }, ind) =>
-          `
-            <div class="catalouge-main" style="padding:50px !important;page-break-before:always">
-            <center>
-            <table   class="header" width="100%" >
-            <tr>
-            <td>  <img src=${logoKCPSRC} height="80"/></td>
-            <td aling="center">   
-            <center>   
-            <h5 style="font-famaily:Acknowledgement; margin:0 20px;">${data?.title}</h5>
-            </center>
-            </td>
-            <td>  <img src=${logoFCISRC} height="80"/></td>
-            </tr>       
-            </table>
-            </center>
-            <br/>
-            <br/>
-            <center>
-            <p class="text-uppercase" style="font-size:28px; font-weight:800;font-family: 'Acknowledgement', sans-serif;">
-            ${breed || ""}
-            </p> 
-            </center>
-            <table style="width:100%; margin:20px 0;">
-            <tr>
-            <td align="left" style="width:50%">
-            <p  style="font-size:22px; font-weight:800;">
-              <strong class="fw-bold">Country of Origin: </strong>${countryName || ""}
-            </p>
-            </td>
-            <td align="right" >
-            <p style="font-size:22px; font-weight:800;">
-            <span class="fw-bold">FCI GROUP:</span> ${group_id || ""}
-            </p>
-            </td>
-            </tr>
-            </table>
-               <p align="justify" style="font-size:25px; font-weight:300 !important;">
-                <img style="margin-right:10px;float:right;margin-left:10px; margin-bottom:10px"
-                  height="150" src=${data.breed_img[id]}/>
-               ${data?.breed_paragraphs[id]}</p>
-               </div>
-               ${paginate(data?.Dogs["breed" + id]).map(
-                 (page) => `
                <div class="catalouge-main" style="padding:50px !important;page-break-before:always">
-               <center>
-               <table  class="header" width="100%" >
-               <tr>
-            <td>  <img src=${logoKCPSRC} height="80"/></td>
-            <td aling="center">   
-            <center>   
-            <h5 style="font-famaily:Acknowledgement; margin:0 20px;">${data?.title}</h5>
-            </center>
-            </td>
-            <td>  <img src=${logoFCISRC} height="80"/></td>
-            </tr>      
-               </table>
+               <center>   
+               <h5 style="font-famaily:Acknowledgement; margin:0 20px;">${data?.title}</h5>
                </center>
                <br/>
+               <br/>
+               <br/>
+               <br/>
+               <br/>
+               <br/>
+               <h1 class="text-uppercase" style="text-align: center;font-family: 'Acknowledgement', sans-serif;">
+               GSDCP Managing
+               Committee</h1>
+               <br/>
+               <br/>
                <center>
-               ${page.map(
-                 ({ dogs,class_name }) =>
-                     dogs.map(
-                       (dog,ind) =>
-                         `
-                         <table style="width:80%;">
-                         <tr>
-                         <td align="left">
-                         <p class="text-uppercase" style="font-family: 'Acknowledgement', sans-serif; font-size:22px; font-weight:800;">${
-                           dog[0].sex
-                            }</p>
-                            </td>
-                         <td align="left" width="70%"><p class="text-uppercase" style="font-family: 'Acknowledgement', sans-serif;font-size:22px; font-weight:800;">
-                         ${class_name.replace("Class","")}</p></td>
-                        
-                         </tr>
-                            </table>
-                            <table width="90%">
-                            ${
-                              dog
-                   ? dog.map(
-                     (
-                       {
-                         KP,
-                         regestration_no,
-                         dog_name,
-                         sire_name,
-                         sire_KP,
-                         dam_KP,
-                         sire_reg_no,
-                         dam_reg_no,
-                         owners,
-                         breeder,
-                         dam_name,
-                         dob,
-                         sex,
-                         catalog_id,
-                        },
-                         ind
-                       ) =>(
-                         `
-                         <tr class="mb-0">
+               <table style="width:80%;">
+               ${  
+                data?.team.map(({full_name,position_name})=>(
+                  `<tr><td><h2>${full_name}</h2></td>
+                  <td><h2>${position_name}</h2></td></tr>
+                  `
+                ))
+               }
+               </table>
+               </center>
+              
+               
+             
+                  </div>
+  
+                  ${paginate(data?.Dogs["breed" + 15]).map(
+           (page) => `
+         <div class="catalouge-main" style="padding:50px !important;page-break-before:always">
+         <center>   
+         <h5 style="font-famaily:Acknowledgement; margin:0 20px;">${data?.title}</h5>
+         </center>
+         <br/>
+         <center>
+         <div>
+         ${
+            page.map(({dogs})=>(
+              dogs.map((dog)=>(
+                   `
+                   ${
+                     dog[0]?
+                     `
+                     <table>
+                     <tr>
+                     <td width="30%"><h1>${dog[0]?.class}</h1></td>
+                     <td  width="30%"><h1>${dog[0]?.sex}</h1></td>
+                     <td  width="30%"><h1>${dog[0]?.hair!=="Stock Hair"?'Long-Stock':''}</h1></td>
+                     </tr>
+                     </table>
+                   `
+                     :'<span style="display:none;"></span>'
+                   }
+                   ${
+                     dog.map(({dob,sire_name,dam_name,catalog_id,dog_name,KP,
+                      sire_KP,dam_KP,breeder,owners,dam_reg_no,sire_reg_no,hair},ind)=>(
+                       `
+                       ${
+                        ind!==0&&dog[ind]?.sex!== dog[ind-1]?.sex && ind!==0&&dog[ind]?.hair!== dog[ind-1]?.hair ?
+                          `
+                          <table>
+                                            <tr>
+                                            <td width="30%"><h1>${dog[ind]?.class}</h1></td>
+                                            <td  width="30%"><h1>${dog[ind]?.sex}</h1></td>
+                                            <td  width="30%"><h1>${dog[ind]?.hair!=="Stock Hair"?'Long-Stock':''}</h1></td>
+                                            </tr>
+                                            </table>`
+                         :''
+                       }
+                       <table>
+                       <tr class="mb-0">
                          <td style="vertical-align:baseline;text-align: center;" width="5%">
                          <p  class="fw-bold p-2">
                          ${
@@ -382,19 +277,19 @@ console.log(fromatAdverts())
                    ${breeder ||"Unknown"},&nbsp; <span class="fw-bold">O</span>:&nbsp;${owners || "Unknown"}</p>
                   </td>
                   </tr>
-                  `
-                     ))
-                   : ''
-               } `
-                     )
-                  )}
                   </table>
-                 </center>
-                  </div>`
-               )}
-               `
-      ) }
-      `))}
+                       `
+                     ))
+                   }  
+                  `
+              ))
+            ))
+         }
+         </div>
+            </table>
+           </center>
+            </div>`
+         )}
        </body>
     </html>
     `;
