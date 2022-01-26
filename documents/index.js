@@ -171,8 +171,6 @@ module.exports = (data) => {
                <br/>
                <h5 class="text-uppercase" style="text-align: center;font-family: 'Acknowledgement', sans-serif;">DATE:  ${data?.dates}</h5>
                </div>
-
-
                <div class="catalouge-main" style="padding:50px !important;page-break-before:always">
                <center>   
                <h5 style="font-famaily:Acknowledgement; margin:0 20px;">${data?.title}</h5>
@@ -199,11 +197,7 @@ module.exports = (data) => {
                }
                </table>
                </center>
-              
-               
-             
                   </div>
-  
                   ${paginate(data?.Dogs["breed" + 15]).map(
            (page) => `
          <div class="catalouge-main" style="padding:50px !important;page-break-before:always">
