@@ -27,33 +27,43 @@ module.exports = (data) => {
     var pages = [];
     var count = 0;
     var page = 0;
+
     var sorted_data = [];
 
-    if (array) {
-      for (let i in array) {
-        count = count + 1;
-      }
-      for (let i = 0; i <= count / 5; i++) {
-        if (page > 1) {
-          pages.push(array.slice(page * 5 - 5, page * 5));
-        } else {
-          pages.push(array.slice(0, 5));
-        }
-        page = page + 1;
-      }
-    }
-
+    while(array.length) pages.push(array.splice(0,5));
+    
     for (let j of pages) {
       sorted_data.push(formatDogs(j));
     }
 
+    for(let d in sorted_data){
+      let temp=sorted_data
+      let prev=parseInt(d)-1
+
+      if(d==0){
+        temp[d]=[{...temp[d][0],isAd:true}]
+      }
+      if(d>0){
+      let [a]=sorted_data[d]
+      let [b]=sorted_data[prev]
+
+    if(a['class_name']!==b['class_name']){
+      temp[d]=[{...temp[d][0],isAd:true}]
+    }
+    else{
+      temp[d]=[{...temp[d][0],isAd:false}]
+    }
+    sorted_data=temp
+  }
+}
+
     return sorted_data;
   }
   function formatDogs(dogs) {
-    const categories = [...new Set(dogs.map((dogs) => dogs.class_name))];
+    const categories = [...new Set(dogs.map((dogs) => dogs?.class_name))];
     return categories.reduce((acc, class_name) => {
-      const _dogs = dogs.filter((dogs) => dogs.class_name === class_name);
-      const male_dogs = _dogs.filter((dog) => dog?.sex === "Male");
+      const _dogs = dogs.filter((dogs) => dogs?.class_name === class_name);
+      const male_dogs = _dogs.filter((dog) => dog?.sex == "Male");
       const female_dogs = _dogs.filter((dog) => dog?.sex === "Female");
       var f_count = 0;
       var m_count = 0;
@@ -77,6 +87,14 @@ module.exports = (data) => {
       }
     }, []);
   }
+
+  const fromatAdverts=()=>{
+    let ads_arr=Array(20).fill(data.ads).flat()
+    return(ads_arr) 
+ }  
+
+ fromatAdverts()
+
     const logoKCPB64 = fs.readFileSync(path.join(__dirname, './logo.png'), {encoding: 'base64'});
     const logoKCPSRC = "data:image/jpeg;base64,"+logoKCPB64;
 
@@ -120,6 +138,10 @@ module.exports = (data) => {
                   background-repeat: no-repeat;
                   background-size: cover;
                   height:210mm !important;
+               }
+               .catalouge-main-advert{
+                padding:50px;
+                height:210mm !important;
                }
                .header{
                   margin:0 12px;
@@ -204,10 +226,15 @@ module.exports = (data) => {
                <br/>
                <br/>
                <br/>
-               <h1 class="text-uppercase" style="text-align: center;">
+               <h1  style="text-align: center;">
+               <strong>
                GSDCP Managing
-               <br/>
+               </strong>
+               </h1>
+               <h1  style="text-align: center;">
+               <strong>
                Committee</h1>
+               </strong>
                <br/>
                <br/>
                <center>
@@ -226,7 +253,7 @@ module.exports = (data) => {
                     ({ judge_name, profile_content, image, type,id }) =>
                       `<div class="catalouge-main" style="padding:50px !important;page-break-before:always">
                       <center>   
-                      <h5 style=" margin:0 20px;">${data?.title}</h5>
+                      <h5 style=" margin:0 20px;"><strong>${data?.title}</strong></h5>
                       </center>
                        <br/>
                           <h1 style="font-size:40px;  text-align: center;" class="text-uppercase">${judge_name}</h1>
@@ -245,7 +272,7 @@ module.exports = (data) => {
                   <br>
                   <br>
                   <center>
-                  <h2>DEFINITION OF CLASSES</h2>
+                  <h2><Strong></Strong>DEFINITION OF CLASSES</h2>
                   </center>
                   <p>
                   In all shows organized by the German Shepherd Dog Club of Pakistan, dogs are
@@ -255,7 +282,7 @@ module.exports = (data) => {
                   <p style="margin-bottom:.6rem!important;"><span style="font-size:13px;"><b>Minor Puppy</b></span> - 6 to 9 months old</p>
                   <p style="margin-bottom:.6rem!important;"><span style="font-size:13px;"><b>Puppy</b></span> - 9 to 12 months old</p>
                   <p style="margin-bottom:.6rem!important;"><span style="font-size:13px;"><b>Junior</b></span>  - 12 to 18 months old</p>
-                  <p style="margin-bottom:.6rem!important;"><span style="font-size:13px;"><b>Youth</b></span>  - 8 to 24 months old</p>
+                  <p style="margin-bottom:.6rem!important;"><span style="font-size:13px;"><b>Youth</b></span>  - 18 to 24 months old</p>
                   <p style="margin-bottom:.6rem!important;"><span style="font-size:13px;"><b>Open</b></span>  - over 2 years of age</p>
                   
                   <p>Each dog entered is graded and placed by the judge. Dogs competing in the open
@@ -738,47 +765,41 @@ module.exports = (data) => {
                         </li>
                       </ol>
                   </div>
-                  
-
                   ${paginate(data?.Dogs["breed" + 15]).map(
-           (page,ind) => `
+                    (page,ind) => 
+                      page.map(({dogs,class_name,isAd},index,arr)=>(
+                        `
+                       ${
+                         isAd?
+                       `  <div class="catalouge-main-advert" style="padding:50px !important;page-break-before:always">
+                  <img src=${data.ads_img[fromatAdverts()[ind]?.id]} height="100%" width="100%"/>
+              </div>`:""
+                       }
+            
+              <div class="catalouge-main" style="padding:50px !important;page-break-before:always">
+              <center>   
+              <h5 style=" margin:0 20px;">${data?.title}</h5>
+              </center>
+              <br/>
+              <center>
+              <div>
+              
+             ${ dogs.map((dog)=>(
+                   `
 
-         <div class="catalouge-main" style="padding:50px !important;page-break-before:always">
-         <center>   
-         <h5 style=" margin:0 20px;">${data?.title}</h5>
-         </center>
-         <br/>
-         <center>
-         <div>
-         ${
-            page.map(({dogs})=>(
-              dogs.map((dog)=>(
-                   `
                    ${
-                     dog[0]?
-                     `
-                     <table style="width:80%;">
-                     <tr>
-                                            <td width="30%"><strong style="font-size:16px;">${dog[0]?.class}</strong></td>
-                                            <td  width="30%"><strong style="font-size:16px;">${dog[0]?.sex}</strong></td>
-                                            <td  width="30%"><strong style="font-size:16px;">${dog[0]?.hair!=="Stock Hair"?'Long-Stock':''}</strong></td>
-                                            </tr>
-                     </table>
-                   `
-                     :'<span style="display:none;"></span>'
-                   }
-                   ${
+
                      dog.map(({dob,sire_name,dam_name,catalog_id,dog_name,KP,hip,elbows,
-                      sire_KP,dam_KP,breeder,owners,dam_reg_no,sire_reg_no,hair,microchip},ind)=>(
+                      sire_KP,dam_KP,breeder,owners,dog_breed,dam_reg_no,sire_reg_no,hair,microchip,dam_breed,sire_breed,achievements},ind)=>(
                        `
                        ${
-                        ind!==0&&dog[ind]?.sex!== dog[ind-1]?.sex && ind!==0&&dog[ind]?.hair!== dog[ind-1]?.hair ?
+                        dog[ind]?.sex!== dog[ind-1]?.sex || dog[ind]?.hair!== dog[ind-1]?.hair?
                           `
-                          <table style="width:80%;">
+                                          <table style="width:80%;">
                                             <tr>
                                             <td width="30%"><strong style="font-size:16px;">${dog[ind]?.class}</strong></td>
                                             <td  width="30%"><strong style="font-size:16px;">${dog[ind]?.sex}</strong></td>
-                                            <td  width="30%"><strong style="font-size:16px;">${dog[ind]?.hair!=="Stock Hair"?'Long-Stock':''}</strong></td>
+                                            <td  width="30%"><strong style="font-size:16px;">${dog[ind]?.hair!=="1"?'Long-Stock':''}</strong></td>
                                             </tr>
                                             </table>`
                          :''
@@ -801,7 +822,7 @@ module.exports = (data) => {
                          </td>
                   <td width="85%" style="padding-bottom:10px;">
                   <p>
-                      <strong class="fw-bold">${dog_name}</strong> &nbsp; &nbsp;
+                      <strong class="fw-bold">${class_name=="Open"?dog_breed==1?"* "+dog_name:dog_name:dog_name}</strong> &nbsp; &nbsp;
                       ${KP? "KP " + KP : regestration_no?regestration_no:''}&nbsp; &nbsp;  ${microchip}
                   </p>
 
@@ -811,16 +832,23 @@ module.exports = (data) => {
                           +","+new Date(dob).toDateString().substring(10)}&nbsp; &nbsp;
                       ${hip?`<strong>HD: </strong>${hip} &nbsp; &nbsp;`:""  }
                       ${elbows?`<strong>ED: </strong>${elbows}`:""  }
-                  </p>
-                          
+                
+                      </p>
+                      <p> 
+                      ${class_name=="Open" && achievements?
+                          ` <strong>Ach: </strong>${achievements}`
+                      :""}
+                      </p>
                          ${
-                          ` <p><strong>S: </strong><span>${sire_name||"Unknown"}</span> &nbsp;&nbsp;
+                          ` <p><strong>S: </strong><span>${sire_breed==1?"*":""} ${sire_name||"Unknown"}</span> &nbsp;&nbsp;
                           <strong>M: </strong>
-                          <span>${dam_name||"Unknown"}</span>
-                          }</p>`
+                          <span>${dam_breed==1?"*":""}${dam_name||"Unknown"}</span>
+                          </p>`
                          }
-                  <p ><strong class="fw-bold">B</strong>:
-                   ${breeder ||"Unknown"} &nbsp;&nbsp; <strong class="fw-bold">O</strong>:&nbsp;${owners || "Unknown"}</p>
+                  <p>
+                  <strong class="fw-bold">B</strong>:
+                  ${breeder ||"Unknown"} &nbsp;&nbsp; <strong class="fw-bold">O</strong>:&nbsp;${owners || "Unknown"}
+                  </p>
                   </td>
                   </tr>
                   </table>
@@ -828,13 +856,15 @@ module.exports = (data) => {
                      ))
                    }  
                   `
-              ))
-            ))
-         }
-         </div>
+              ))}
+              </div>
             </table>
            </center>
-            </div>`
+            </div>
+              `
+            ))
+         
+         
          )}
        </body>
     </html>

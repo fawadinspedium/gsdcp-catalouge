@@ -59,30 +59,18 @@ app.get('/fetch-award', (req, res) => {
 })
 
 app.get('/update-pdf/:id', (req, res) => {
-  const data=axios.get(`https://gsdcp.org/api/send-catalog?id=${req.params.id}`)
+  axios.get(`https://gsdcp.org/api/send-catalog?id=${req.params.id}`)
   .then(response => {
     const path = __dirname+`/${response.data.title}-${response.data.dates}.pdf`;
     if (fs.existsSync(path)) {
-      fs.unlinkSync(path);
-      pdf.create(pdfTemplate(response.data,config))
-      .toFile(`/${response.data.title}-${response.data.dates}.pdf`, 
-      (err) => {
-        if(err) {
-            res.send(Promise.reject());
-        }
-        res.status(200)
-        .sendFile(`${__dirname}/${response.data.title}-${response.data.dates}.pdf`)
-        });
+      fs.unlink(path)
     } 
     else {
-      console.log("DOES NOT exist:", path);
-      pdf.create(pdfTemplate(response.data,config))
-      .toFile(`/${response.data.title}-${response.data.dates}.pdf`, (err) => {
+      pdf.create(pdfTemplate(response.data,config)).toFile(`${response.data.title}-${response.data.dates}.pdf`, (err) => {
         if(err) {
             res.send(Promise.reject());
         }
-        res.status(200)
-        .sendFile(`${__dirname}/${response.data.title}-${response.data.dates}.pdf`)
+        res.status(200).sendFile(`${__dirname}/${response.data.title}-${response.data.dates}.pdf`)
         }
       );
     }
@@ -91,6 +79,7 @@ app.get('/update-pdf/:id', (req, res) => {
     console.log(error);
   });
 })
+
 
 app.get('/fetch-pdf-html/:id', (req, res) => {
   const data=axios.get(`https://gsdcp.org/api/send-catalog?id=${req.params.id}`)

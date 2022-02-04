@@ -47,6 +47,29 @@ module.exports = (data) => {
       sorted_data.push(formatDogs(j));
     }
 
+    for(let d in sorted_data){
+    
+      let temp=sorted_data
+      let prev=parseInt(d)-1
+
+   
+     
+    if(d>0){
+      let [a]=sorted_data[d]
+
+      let [b]=sorted_data[prev]
+
+    if(a['class_name']!==b['class_name']){
+      temp[d-1]=[{...temp[d-1][0],isAd:true}]
+    }
+    else{
+      temp[d-1]=[{...temp[d-1][0],isAd:false}]
+    }
+    sorted_data=temp
+  }
+ 
+}
+
     return sorted_data;
   }
   function formatDogs(dogs) {
@@ -88,6 +111,10 @@ module.exports = (data) => {
     
     const dogImgOne = fs.readFileSync(path.join(__dirname, './dog_1.jpg'), {encoding: 'base64'});
     const dogImgOneSRC = "data:image/jpeg;base64,"+dogImgOne;
+
+
+    
+
 
     return paginate(data?.Dogs["breed" + 15])
     
